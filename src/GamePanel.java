@@ -19,14 +19,14 @@ public class GamePanel extends JPanel implements ActionListener {
     private static int y[] = new int[50000];
     private int body = 6;
     private Boolean running = false;
-    private int fruitSize = 0, appleCount = 0;
-    private int appleEaten = 0;
-    private int appleX;
-    private int appleY;
+    private int fruitSize = 0, fruitCount = 0;
+    private int fruitEaten = 0;
+    private int fruitX;
+    private int fruitY;
     private char direction = 'R';
     private boolean gameOver = false;
     public FontMetrics fMetrics;
-    private boolean appleCounter = false;
+    private boolean fruitCounter = false;
 
     // End of variables declaration
 
@@ -44,7 +44,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void startGame() {
-        newApple();
+        newfruit();
         timer = new Timer(Delay, this);
         timer.start();
     }
@@ -69,19 +69,19 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         // ////// for testing //
-        // g.drawOval(appleX, Delay, WIDTH, HEIGHT);
+        // g.drawOval(fruitX, Delay, WIDTH, HEIGHT);
         // g.setColor(Color.white);
     }
 
     private void gameRunning(Graphics g) {
 
-        // draw apple
-        if (appleCounter) {
+        // draw fruit
+        if (fruitCounter) {
             g.setColor(Color.GREEN);
-            g.fillOval(appleX, appleY, Unit_size * 2, Unit_size * 2);
+            g.fillOval(fruitX, fruitY, Unit_size * 2, Unit_size * 2);
         } else {
             g.setColor(Color.GREEN);
-            g.fillOval(appleX, appleY, Unit_size, Unit_size);
+            g.fillOval(fruitX, fruitY, Unit_size, Unit_size);
         }
 
         // draw snake
@@ -105,38 +105,38 @@ public class GamePanel extends JPanel implements ActionListener {
         g.setColor(Color.blue);
         g.setFont(new Font("Arial Black", Font.ITALIC, 30));
         fMetrics = getFontMetrics(g.getFont());
-        g.drawString("Point: " + appleEaten, (WIDTH - fMetrics.stringWidth("Point: " + appleEaten)) - 20, 30);
+        g.drawString("Point: " + fruitEaten, (WIDTH - fMetrics.stringWidth("Point: " + fruitEaten)) - 20, 30);
     }
 
-    public void checkApple() {
-        if (appleCount == 5) {
-            appleCounter = true;
+    public void checkfruit() {
+        if (fruitCount == 5) {
+            fruitCounter = true;
             fruitSize = Unit_size;
         }
-        if (appleCount == 6) {
-            appleEaten += 50;
-            appleCount = 0;
-            appleCounter = false;
+        if (fruitCount == 6) {
+            fruitEaten += 50;
+            fruitCount = 0;
+            fruitCounter = false;
         }
-        if (x[0] >= appleX && x[0] <= appleX + fruitSize
-                && y[0] >= appleY && y[0] <= appleY + fruitSize) {
+        if (x[0] >= fruitX && x[0] <= fruitX + fruitSize
+                && y[0] >= fruitY && y[0] <= fruitY + fruitSize) {
 
-            appleEaten++;
+            fruitEaten++;
             body++;
-            appleCount++;
-            appleCounter = false;
-            newApple();
+            fruitCount++;
+            fruitCounter = false;
+            newfruit();
         }
     }
 
-    private void newApple() {
-        appleX = random.nextInt((WIDTH / Unit_size)) * (Unit_size);
-        appleY = random.nextInt((HEIGHT / Unit_size)) * (Unit_size);
+    private void newfruit() {
+        fruitX = random.nextInt((WIDTH / Unit_size)) * (Unit_size);
+        fruitY = random.nextInt((HEIGHT / Unit_size)) * (Unit_size);
     }
 
     private void gamePaused(Graphics g) {
         g.setColor(Color.GREEN);
-        g.fillOval(appleX, appleY, Unit_size, Unit_size);
+        g.fillOval(fruitX, fruitY, Unit_size, Unit_size);
 
         for (int i = 0; i < body; i++) {
             if (i == 0) {
@@ -163,7 +163,7 @@ public class GamePanel extends JPanel implements ActionListener {
         g.setColor(Color.blue);
         g.setFont(new Font("Arial Black", Font.ITALIC, 50));
         FontMetrics point = getFontMetrics(g.getFont());
-        g.drawString("Point: " + appleEaten, (WIDTH - point.stringWidth("Point: " + appleEaten)) / 2, 90);
+        g.drawString("Point: " + fruitEaten, (WIDTH - point.stringWidth("Point: " + fruitEaten)) / 2, 90);
 
         g.setColor(Color.red);
         g.setFont(new Font("Arial Black", Font.BOLD, 80));
@@ -280,7 +280,7 @@ public class GamePanel extends JPanel implements ActionListener {
         returnMenuBtn.setVisible(false);
         x = new int[5000];
         y = new int[5000];
-        appleEaten = 0;
+        fruitEaten = 0;
         body = 6;
         paintComponent(getGraphics());
     }
@@ -340,7 +340,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (running && !gameOver) {
             move();
-            checkApple();
+            checkfruit();
             checkCollisions();
         }
         repaint();
@@ -372,7 +372,7 @@ public class GamePanel extends JPanel implements ActionListener {
                     running = true;
                     gameOver = false;
                     move();
-                    checkApple();
+                    checkfruit();
                     checkCollisions();
                     break;
                 default:
