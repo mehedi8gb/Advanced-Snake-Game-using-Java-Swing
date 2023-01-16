@@ -55,10 +55,11 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void draw(Graphics g) {
-        for (int i = 0; i < HEIGHT / Unit_size; i++) {
-            g.drawLine(i * Unit_size, 0, i * Unit_size, HEIGHT);
-            g.drawLine(0, i * Unit_size, WIDTH, i * Unit_size);
-        }
+        // for (int i = 0; i < HEIGHT / Unit_size; i++) {
+        //     g.drawLine(i * Unit_size, 0, i * Unit_size, HEIGHT);
+        //     g.drawLine(0, i * Unit_size, WIDTH, i * Unit_size);
+        // }
+
         if (running && !gameOver) {
             gameRunning(g);
         } else if (!running && !gameOver) {
