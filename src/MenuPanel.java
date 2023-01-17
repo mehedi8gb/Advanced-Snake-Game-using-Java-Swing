@@ -125,7 +125,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 
         // ---------- end exit btn
 
-        imgLabel.setIcon(new ImageIcon(getClass().getResource("/bg.jpg")));
+        imgLabel.setIcon(new ImageIcon(getClass().getResource("res/bg.jpg")));
         add(imgLabel);
         imgLabel.setBounds(0, 0, 700, 400);
     }
@@ -216,7 +216,6 @@ public class MenuPanel extends JPanel implements ActionListener {
     private void settingsBtnActionPerformed(ActionEvent evt) {
         settingPanel = new SettingPanel();
         settingPanel.setVisible(true);
-        settingPanel.setMenuPanelObj(this);
         this.setVisible(false);
         frame.add(settingPanel);
         frame.setTitle("Game Settings");

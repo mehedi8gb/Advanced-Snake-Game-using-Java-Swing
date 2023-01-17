@@ -7,7 +7,7 @@ public class SettingPanel extends JPanel implements ActionListener {
     // Variables declaration
     JLabel imgLabel;
     private JButton backBtn;
-    private JPanel MenuPanel;
+    // private JPanel MenuPanel;
 
     // End of variables declaration
     public SettingPanel() {
@@ -28,18 +28,14 @@ public class SettingPanel extends JPanel implements ActionListener {
         add(backBtn);
         backBtn.setBounds(550, 10, 130, 30);
 
-        imgLabel.setIcon(new ImageIcon(getClass().getResource("/bg.jpg")));
+        imgLabel.setIcon(new ImageIcon(getClass().getResource("res/bg.jpg")));
         add(imgLabel);
         imgLabel.setBounds(0, 0, 700, 400);
     }
 
-    public void setMenuPanelObj(MenuPanel obj) {
-        this.MenuPanel = obj;
-    }
-
     private void backBtnActionPerformed(ActionEvent evt) {
         this.setVisible(false);
-        MenuPanel.setVisible(true);
+        Game.menuPanel.setVisible(true);
         Game.MainWindow.setTitle("Game Screen");
     }
 

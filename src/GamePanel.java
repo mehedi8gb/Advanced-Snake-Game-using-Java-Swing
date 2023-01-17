@@ -13,20 +13,33 @@ public class GamePanel extends JPanel implements ActionListener {
     private Random random;
     private static int HEIGHT = 600;
     private static int WIDTH = 600;
-    private static int Unit_size = 15;
-    private static int Delay = 80;
-    private static int x[] = new int[50000];
-    private static int y[] = new int[50000];
+    private static int unitSize = 15;
+    private static int Delay = 90;
+    private static int gameUnits = (WIDTH*HEIGHT)/(unitSize * unitSize);
+    private static int x[] = new int[gameUnits];
+    private static int y[] = new int[gameUnits];
     private int body = 6;
     private Boolean running = false;
-    private int fruitSize = 0, appleCount = 0;
-    private int appleEaten = 0;
-    private int appleX;
-    private int appleY;
+    private int fruitSize = 0, fruitCount = 0;
+    private int fruitEaten = 0;
+    private int fruitX;
+    private int fruitY;
     private char direction = 'R';
     private boolean gameOver = false;
     public FontMetrics fMetrics;
-    private boolean appleCounter = false;
+    private boolean fruitCounter = false;
+    private Image fruit;
+    private Image head_U;
+    private Image head_D;
+    private Image head_L;
+    private Image head_R;
+    private Image body_X;
+    private Image body_Y;
+    private Image tail_R;
+    private Image tail_L;
+    private Image tail_D;
+    private Image tail_U;
+    private Image bigFruit;
 
     // End of variables declaration
 
@@ -34,17 +47,46 @@ public class GamePanel extends JPanel implements ActionListener {
         random = new Random();
         continueBtn = new JButton();
         returnMenuBtn = new JButton();
-
         this.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         this.setBackground(Color.black);
         this.setFocusable(true);
         this.addKeyListener(new GameKeyAdapter());
+        loadImage();
         startGame();
-        // setLayout(null);
+    }
+
+    private void loadImage(){
+        ImageIcon iia = new ImageIcon("res/fruit.png");
+        fruit = iia.getImage();
+        ImageIcon iiaa = new ImageIcon("res/fruit-big.png");
+        bigFruit = iiaa.getImage();
+
+        ImageIcon UpHead = new ImageIcon("res/head-U.png");
+        head_U = UpHead.getImage();
+        ImageIcon DownHead = new ImageIcon("res/head-D.png");
+        head_D = DownHead.getImage();
+        ImageIcon LeftHead = new ImageIcon("res/head-L.png");
+        head_L = LeftHead.getImage();
+        ImageIcon RightHead = new ImageIcon("res/head-R.png");
+        head_R = RightHead.getImage();
+
+        ImageIcon bX = new ImageIcon("res/body-X.png");
+        body_X = bX.getImage();
+        ImageIcon bY = new ImageIcon("res/body-Y.png");
+        body_Y = bY.getImage();
+
+        ImageIcon tR = new ImageIcon("res/tail-R.png");
+        tail_R = tR.getImage();
+        ImageIcon tL = new ImageIcon("res/tail-L.png");
+        tail_L = tL.getImage();
+        ImageIcon tU = new ImageIcon("res/tail-U.png");
+        tail_U = tU.getImage();
+        ImageIcon tD = new ImageIcon("res/tail-D.png");
+        tail_D = tD.getImage();
     }
 
     public void startGame() {
-        newApple();
+        newfruit();
         timer = new Timer(Delay, this);
         timer.start();
     }
@@ -55,9 +97,9 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     public void draw(Graphics g) {
-        // for (int i = 0; i < HEIGHT / Unit_size; i++) {
-        //     g.drawLine(i * Unit_size, 0, i * Unit_size, HEIGHT);
-        //     g.drawLine(0, i * Unit_size, WIDTH, i * Unit_size);
+        // for (int i = 0; i < HEIGHT / unitSize; i++) {
+        //     g.drawLine(i * unitSize, 0, i * unitSize, HEIGHT);
+        //     g.drawLine(0, i * unitSize, WIDTH, i * unitSize);
         // }
 
         if (running && !gameOver) {
@@ -69,82 +111,182 @@ public class GamePanel extends JPanel implements ActionListener {
         }
 
         // ////// for testing //
-        // g.drawOval(appleX, Delay, WIDTH, HEIGHT);
+        // g.drawOval(fruitX, Delay, WIDTH, HEIGHT);
         // g.setColor(Color.white);
     }
 
     private void gameRunning(Graphics g) {
 
-        // draw apple
-        if (appleCounter) {
-            g.setColor(Color.GREEN);
-            g.fillOval(appleX, appleY, Unit_size * 2, Unit_size * 2);
+        // draw fruit
+        if (fruitCounter) {
+            g.setColor(Color.RED);
+            // g.fillOval(fruitX, fruitY, unitSize * 2, unitSize * 2);
+            g.drawImage(bigFruit, fruitX,fruitY,this);
+            // fruitCounter = false;
         } else {
-            g.setColor(Color.GREEN);
-            g.fillOval(appleX, appleY, Unit_size, Unit_size);
+            // g.setColor(Color.GREEN);
+            // g.fillOval(fruitX, fruitY, unitSize, unitSize);
+            g.drawImage(fruit, fruitX,fruitY,this);
         }
 
         // draw snake
-        for (int i = 0; i < body; i++) {
-            if (i == 0) {
-                g.setColor(Color.RED);
-                g.fillRect(x[i], y[i], Unit_size, Unit_size);
-                // g.draw3DRect(x[i], y[i], 18, 18, getFocusTraversalKeysEnabled());
-                // g.drawOval(x[i], y[i], 18, 18);
-                // g.drawLine(x[i], y[i], 18, 18);
-                // g.fill3DRect(x[i], y[i], 18, 18, true);
-            } else {
-                g.setColor(Color.white);
+        // for (int i = 0; i < body; i++) {
+        //     if (i == 0) {
+        //         g.setColor(Color.RED);
+        //         g.fillRect(x[i], y[i], unitSize, unitSize);
+        //         // g.draw3DRect(x[i], y[i], 18, 18, getFocusTraversalKeysEnabled());
+        //         // g.drawOval(x[i], y[i], 18, 18);
+        //         // g.drawLine(x[i], y[i], 18, 18);
+        //         // g.fill3DRect(x[i], y[i], 18, 18, true);
+        //     } else {
+        //         g.setColor(Color.white);
 
-                g.fillRect(x[i], y[i], Unit_size, Unit_size);
-                // g.fillRoundRect(x[i], y[i], Unit_size, Unit_size,WIDTH, HEIGHT);
-                // g.fill3DRect(x[i], y[i], 18, 18, false);
+        //         g.fillRect(x[i], y[i], unitSize, unitSize);
+        //         // g.fillRoundRect(x[i], y[i], unitSize, unitSize,WIDTH, HEIGHT);
+        //         // g.fill3DRect(x[i], y[i], 18, 18, false);
+        //     }
+        // }
+
+
+        for(int i = 0; i< body;i++) {
+				/* head */
+				if(i == 0) {
+					
+					
+					/* Fill head based on the current direction */
+					if(direction == 'U') {
+						// g.fillArc(x[i], y[i], unitSize, unitSize, 135, 270);
+						// g.fillRect(x[i], y[i]+ unitSize/2, unitSize, unitSize/2);
+                        g.drawImage(head_U, x[i], y[i],this);
+
+					} 
+					else if(direction == 'D') {
+						// g.fillArc(x[i], y[i], unitSize, unitSize, 315, 270);
+						// g.fillRect(x[i], y[i], unitSize, unitSize/2);
+                        g.drawImage(head_D, x[i], y[i],this);
+					}
+					else if(direction == 'L') {
+						// g.fillArc(x[i], y[i], unitSize, unitSize, 225, 270);
+						// g.fillRect(x[i] + unitSize/2, y[i], unitSize/2, unitSize);
+                        g.drawImage(head_L, x[i], y[i],this);
+					}	
+					else {
+						// g.fillArc(x[i], y[i], unitSize, unitSize, 45, 270);
+						// g.fillRect(x[i], y[i], unitSize/2, unitSize);
+                        g.drawImage(head_R, x[i], y[i],this);
+					}
+				}
+				/* body */
+				else {
+					// g.setColor(Color.green);
+					// g.fillOval(x[i], y[i], unitSize, unitSize);
+                    if (direction == 'R' || direction == 'L' ) {
+                        g.drawImage(body_X,x[i],y[i],this);
+                    }else {
+                        g.drawImage(body_Y,x[i],y[i],this);
+                    }
+                    int balance = 0;
+                    // if (balance == body) {
+                    //     balance = 0;
+                    // }
+                    if (i+1 == body) {
+                        // --balance;
+                        if (direction == 'R' || balance == 0) {
+                            // balance = body;
+                            g.drawImage(tail_R,x[i+1],y[i+1],this);
+                        //     g.setColor(Color.green);
+						// g.fillOval(x[i]+1 + unitSize, y[i]+1, unitSize, unitSize);
+                        } 
+                        else if (direction == 'L' || balance == 0){
+                            // balance = body;
+                            g.drawImage(tail_L,x[i+1],y[i+1],this);
+                        }
+                        else if (direction == 'U' || balance == 0){
+                            g.drawImage(tail_U,x[i+1],y[i+1],this);
+                        }
+                        else if (direction == 'D' || balance == 0){
+                            g.drawImage(tail_D,x[i+1],y[i+1],this);
+                        }
+                
+                    }
+                  
+
+				}	
             }
-        }
+
         // set point bar
         g.setColor(Color.blue);
         g.setFont(new Font("Arial Black", Font.ITALIC, 30));
         fMetrics = getFontMetrics(g.getFont());
-        g.drawString("Point: " + appleEaten, (WIDTH - fMetrics.stringWidth("Point: " + appleEaten)) - 20, 30);
+        g.drawString("Point: " + fruitEaten, (WIDTH - fMetrics.stringWidth("Point: " + fruitEaten)) - 20, 30);
     }
 
-    public void checkApple() {
-        if (appleCount == 5) {
-            appleCounter = true;
-            fruitSize = Unit_size;
+    public void checkfruit() {
+        if (fruitCount == 5) {
+            fruitCounter = true;
+            fruitSize = unitSize;
         }
-        if (appleCount == 6) {
-            appleEaten += 50;
-            appleCount = 0;
-            appleCounter = false;
+        if (fruitCount == 6) {
+            fruitEaten += 50;
+            fruitCount = 0;
+            fruitCounter = false;
+            fruitSize = 0;
         }
-        if (x[0] >= appleX && x[0] <= appleX + fruitSize
-                && y[0] >= appleY && y[0] <= appleY + fruitSize) {
+        if (x[0] >= fruitX && x[0] <= fruitX + fruitSize && y[0] >= fruitY && y[0] <= fruitY + fruitSize) {
 
-            appleEaten++;
+            fruitEaten++;
             body++;
-            appleCount++;
-            appleCounter = false;
-            newApple();
+            fruitCount++;
+            fruitCounter = false;
+            newfruit();
         }
     }
 
-    private void newApple() {
-        appleX = random.nextInt((WIDTH / Unit_size)) * (Unit_size);
-        appleY = random.nextInt((HEIGHT / Unit_size)) * (Unit_size);
+    private void newfruit() {
+        // fruitX = random.nextInt((WIDTH / unitSize)) * (unitSize);
+        // fruitY = random.nextInt((HEIGHT / unitSize)) * (unitSize);
+        boolean found = false;
+		boolean collision;
+        while(!found) {
+			collision = false;
+			fruitX = random.nextInt((int)(WIDTH/unitSize))*unitSize;
+			fruitY = random.nextInt((int)(HEIGHT/unitSize))*unitSize;
+			
+			/* Dont spawn fruit on body parts */
+			/* For every body part, check if newfruit is in the same coordinate */
+			for(int i = body;i>0;i--) {
+				if((fruitX == x[i]) && (fruitY== y[i])) {
+					collision = true;
+					break;
+				}
+			}
+			
+			/* Dont spawn fruit on walls */
+			/* For every wall, check if newfruit is in the same coordinate */
+			// for(int i = numWalls;i>0;i--) {
+			// 	if((fruitX == wallX[i]) && (fruitY == wallY[i])) {
+			// 		collision = true;
+			// 		break;
+			// 	}
+			// }
+			
+			if(!collision) {
+				found = true;
+			}
+		}
     }
 
     private void gamePaused(Graphics g) {
         g.setColor(Color.GREEN);
-        g.fillOval(appleX, appleY, Unit_size, Unit_size);
+        g.fillOval(fruitX, fruitY, unitSize, unitSize);
 
         for (int i = 0; i < body; i++) {
             if (i == 0) {
                 g.setColor(Color.RED);
-                g.fillRect(x[i], y[i], Unit_size, Unit_size);
+                g.fillRect(x[i], y[i], unitSize, unitSize);
             } else {
                 g.setColor(Color.white);
-                g.fillRect(x[i], y[i], Unit_size, Unit_size);
+                g.fillRect(x[i], y[i], unitSize, unitSize);
             }
         }
 
@@ -163,7 +305,7 @@ public class GamePanel extends JPanel implements ActionListener {
         g.setColor(Color.blue);
         g.setFont(new Font("Arial Black", Font.ITALIC, 50));
         FontMetrics point = getFontMetrics(g.getFont());
-        g.drawString("Point: " + appleEaten, (WIDTH - point.stringWidth("Point: " + appleEaten)) / 2, 90);
+        g.drawString("Point: " + fruitEaten, (WIDTH - point.stringWidth("Point: " + fruitEaten)) / 2, 90);
 
         g.setColor(Color.red);
         g.setFont(new Font("Arial Black", Font.BOLD, 80));
@@ -219,16 +361,16 @@ public class GamePanel extends JPanel implements ActionListener {
         }
         switch (direction) {
             case 'U':
-                y[0] -= Unit_size;
+                y[0] -= unitSize;
                 break;
             case 'D':
-                y[0] += Unit_size;
+                y[0] += unitSize;
                 break;
             case 'R':
-                x[0] += Unit_size;
+                x[0] += unitSize;
                 break;
             case 'L':
-                x[0] -= Unit_size;
+                x[0] -= unitSize;
                 break;
         }
     }
@@ -280,7 +422,7 @@ public class GamePanel extends JPanel implements ActionListener {
         returnMenuBtn.setVisible(false);
         x = new int[5000];
         y = new int[5000];
-        appleEaten = 0;
+        fruitEaten = 0;
         body = 6;
         paintComponent(getGraphics());
     }
@@ -340,7 +482,7 @@ public class GamePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         if (running && !gameOver) {
             move();
-            checkApple();
+            checkfruit();
             checkCollisions();
         }
         repaint();
@@ -372,7 +514,7 @@ public class GamePanel extends JPanel implements ActionListener {
                     running = true;
                     gameOver = false;
                     move();
-                    checkApple();
+                    checkfruit();
                     checkCollisions();
                     break;
                 default:
