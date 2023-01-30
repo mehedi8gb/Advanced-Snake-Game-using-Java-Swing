@@ -34,6 +34,7 @@ public class SettingPanel extends JPanel implements ActionListener {
     }
 
     private void backBtnActionPerformed(ActionEvent evt) {
+        MenuPanel.menuBtnSound.start();
         this.setVisible(false);
         Launch.menuPanel.setVisible(true);
         Launch.MainWindow.setTitle("Game Screen");

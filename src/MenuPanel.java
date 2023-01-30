@@ -16,6 +16,8 @@ public class MenuPanel extends JPanel implements ActionListener {
     public static GamePanel gamePanel;
     public static Launch game;
     private static AudioPlayer bgSound;
+    public static AudioPlayer menuBtnSound = new AudioPlayer("res/audio/menuBtn.mp3");
+    public static AudioPlayer startBtnSound = new AudioPlayer("res/audio/start.mp3");
     // End of variables declaration
 
     /**
@@ -198,6 +200,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     }
 
     private void newGameBtnActionPerformed(ActionEvent evt) {
+        startBtnSound.start();
         this.setVisible(false);
         Launch.HEIGHT = 700;
         frame.setVisible(false);
@@ -207,7 +210,7 @@ public class MenuPanel extends JPanel implements ActionListener {
     // continue button
 
     private void continueBtnActionPerformed(ActionEvent evt) {
-
+        menuBtnSound.start();
     }
 
     private void continueBtnMouseEntered(MouseEvent evt) {
@@ -220,6 +223,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 
     // settings button
     private void settingsBtnActionPerformed(ActionEvent evt) {
+        menuBtnSound.start();
         settingPanel = new SettingPanel();
         settingPanel.setVisible(true);
         this.setVisible(false);
@@ -237,6 +241,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 
     // exit button
     private void exitBtnActionPerformed(ActionEvent evt) {
+        menuBtnSound.start();
         System.exit(0);
     }
 
