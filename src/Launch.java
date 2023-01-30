@@ -33,7 +33,7 @@ public class Launch extends JFrame {
      * @throws Exception
      */
     public static void main(String[] args) throws Exception {
-        MainWindow = new Launch(true);
+        MainWindow = new Launch();
         MainWindow.setVisible(true);
     }
 }
