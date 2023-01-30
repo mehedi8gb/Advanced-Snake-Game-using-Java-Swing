@@ -14,13 +14,19 @@ public class MenuPanel extends JPanel implements ActionListener {
     public static SettingPanel settingPanel;
     public static JFrame frame;
     public static GamePanel gamePanel;
-    public static Game game;
+    public static Launch game;
+    private static AudioPlayer bgSound;
     // End of variables declaration
 
-    public MenuPanel(Game obj) {
+    /**
+     * @param obj is Main Frame or Game Window
+     */
+    public MenuPanel(Launch obj) {
         MenuPanel.frame = obj;
+        bgSound = new AudioPlayer("res/audio/background.mp3");
+        bgSound.start();
         gamePanel = new GamePanel();
-        game = new Game(true);
+        game = new Launch(true);
         mainTitle = new JLabel();
         exitBtn = new JButton();
         settingsBtn = new JButton();
@@ -28,7 +34,7 @@ public class MenuPanel extends JPanel implements ActionListener {
         continueBtn = new JButton();
         imgLabel = new JLabel();
 
-        this.setPreferredSize(new Dimension(Game.WIDTH, Game.HEIGHT));
+        this.setPreferredSize(new Dimension(Launch.WIDTH, Launch.HEIGHT));
         setLayout(null);
 
         mainTitle.setFont(new Font("Cambria", 1, 36));
@@ -193,7 +199,7 @@ public class MenuPanel extends JPanel implements ActionListener {
 
     private void newGameBtnActionPerformed(ActionEvent evt) {
         this.setVisible(false);
-        Game.HEIGHT = 700;
+        Launch.HEIGHT = 700;
         frame.setVisible(false);
         game.setVisible(true);
 

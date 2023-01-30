@@ -14,7 +14,7 @@ public class SettingPanel extends JPanel implements ActionListener {
         imgLabel = new JLabel();
         backBtn = new JButton();
 
-        this.setPreferredSize(new Dimension(Game.WIDTH, Game.HEIGHT));
+        this.setPreferredSize(new Dimension(Launch.WIDTH, Launch.HEIGHT));
         setLayout(null);
 
         backBtn.setText("Back");
@@ -35,8 +35,8 @@ public class SettingPanel extends JPanel implements ActionListener {
 
     private void backBtnActionPerformed(ActionEvent evt) {
         this.setVisible(false);
-        Game.menuPanel.setVisible(true);
-        Game.MainWindow.setTitle("Game Screen");
+        Launch.menuPanel.setVisible(true);
+        Launch.MainWindow.setTitle("Game Screen");
     }
 
     @Override

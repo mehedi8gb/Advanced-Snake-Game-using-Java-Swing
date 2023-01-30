@@ -12,7 +12,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private Timer timer;
     private Random random;
     private static int HEIGHT = 600;
-    private static int WIDTH = 600;
+    private static int WIDTH = 615;
     private static int unitSize = 15;
     private static int Delay = 90;
     private static int gameUnits = (WIDTH*HEIGHT)/(unitSize * unitSize);
@@ -40,6 +40,8 @@ public class GamePanel extends JPanel implements ActionListener {
     private Image tail_D;
     private Image tail_U;
     private Image bigFruit;
+    private int balance = body;
+    private static AudioPlayer eatSound = new AudioPlayer("res/audio/eating-sound.mp3");
 
     // End of variables declaration
 
@@ -55,34 +57,32 @@ public class GamePanel extends JPanel implements ActionListener {
         startGame();
     }
 
+    /**
+     * 
+     */
     private void loadImage(){
-        ImageIcon iia = new ImageIcon("res/fruit.png");
-        fruit = iia.getImage();
-        ImageIcon iiaa = new ImageIcon("res/fruit-big.png");
-        bigFruit = iiaa.getImage();
+   try {
+    fruit = new ImageIcon(getClass().getResource("res/fruit.png")).getImage();
+    bigFruit = new ImageIcon(getClass().getResource("res/fruit-big.png")).getImage();
+    
+    head_U = new ImageIcon(getClass().getResource("res/head-U.png")).getImage();
+    head_D = new ImageIcon(getClass().getResource("res/head-D.png")).getImage();
 
-        ImageIcon UpHead = new ImageIcon("res/head-U.png");
-        head_U = UpHead.getImage();
-        ImageIcon DownHead = new ImageIcon("res/head-D.png");
-        head_D = DownHead.getImage();
-        ImageIcon LeftHead = new ImageIcon("res/head-L.png");
-        head_L = LeftHead.getImage();
-        ImageIcon RightHead = new ImageIcon("res/head-R.png");
-        head_R = RightHead.getImage();
+    head_L = new ImageIcon(getClass().getResource("res/head-L.png")).getImage();
+    head_R = new ImageIcon(getClass().getResource("res/head-R.png")).getImage();
 
-        ImageIcon bX = new ImageIcon("res/body-X.png");
-        body_X = bX.getImage();
-        ImageIcon bY = new ImageIcon("res/body-Y.png");
-        body_Y = bY.getImage();
+    body_X = new ImageIcon(getClass().getResource("res/body-X.png")).getImage();
+    body_Y = new ImageIcon(getClass().getResource("res/body-Y.png")).getImage();
 
-        ImageIcon tR = new ImageIcon("res/tail-R.png");
-        tail_R = tR.getImage();
-        ImageIcon tL = new ImageIcon("res/tail-L.png");
-        tail_L = tL.getImage();
-        ImageIcon tU = new ImageIcon("res/tail-U.png");
-        tail_U = tU.getImage();
-        ImageIcon tD = new ImageIcon("res/tail-D.png");
-        tail_D = tD.getImage();
+    tail_R = new ImageIcon(getClass().getResource("res/tail-R.png")).getImage();
+    tail_L = new ImageIcon(getClass().getResource("res/tail-L.png")).getImage();
+
+    tail_U = new ImageIcon(getClass().getResource("res/tail-U.png")).getImage();
+    tail_D = new ImageIcon(getClass().getResource("res/tail-D.png")).getImage();
+    
+   } catch (Exception e) {
+    e.printStackTrace();
+   }
     }
 
     public void startGame() {
@@ -185,26 +185,27 @@ public class GamePanel extends JPanel implements ActionListener {
                     }else {
                         g.drawImage(body_Y,x[i],y[i],this);
                     }
-                    int balance = 0;
                     // if (balance == body) {
                     //     balance = 0;
                     // }
                     if (i+1 == body) {
-                        // --balance;
-                        if (direction == 'R' || balance == 0) {
-                            // balance = body;
+                        --balance;
+                        if (direction == 'R' && balance == 0) {
+                            balance = body;
                             g.drawImage(tail_R,x[i+1],y[i+1],this);
                         //     g.setColor(Color.green);
 						// g.fillOval(x[i]+1 + unitSize, y[i]+1, unitSize, unitSize);
                         } 
-                        else if (direction == 'L' || balance == 0){
-                            // balance = body;
+                        else if (direction == 'L' && balance == 0){
+                            balance = body;
                             g.drawImage(tail_L,x[i+1],y[i+1],this);
                         }
-                        else if (direction == 'U' || balance == 0){
+                        else if (direction == 'U' && balance == 0){
+                            balance = body;
                             g.drawImage(tail_U,x[i+1],y[i+1],this);
                         }
-                        else if (direction == 'D' || balance == 0){
+                        else if (direction == 'D' && balance == 0){
+                            balance = body;
                             g.drawImage(tail_D,x[i+1],y[i+1],this);
                         }
                 
@@ -234,6 +235,7 @@ public class GamePanel extends JPanel implements ActionListener {
         }
         if (x[0] >= fruitX && x[0] <= fruitX + fruitSize && y[0] >= fruitY && y[0] <= fruitY + fruitSize) {
 
+            eatSound.start();
             fruitEaten++;
             body++;
             fruitCount++;
@@ -428,11 +430,11 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void returnMenuBtnActionPerformed(ActionEvent evt) {
-        Game.HEIGHT = 425;
-        Game.MainWindow.setTitle("Game Screen");
-        Game.menuPanel.setVisible(true);
+        Launch.HEIGHT = 425;
+        Launch.MainWindow.setTitle("Game Screen");
+        Launch.menuPanel.setVisible(true);
         MenuPanel.frame.setVisible(true);
-        MenuPanel.frame.add(Game.menuPanel);
+        MenuPanel.frame.add(Launch.menuPanel);
         MenuPanel.game.setVisible(false);
     }
 
