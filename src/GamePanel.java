@@ -14,7 +14,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private static int HEIGHT = 600;
     private static int WIDTH = 600;
     private static int unitSize = 15;
-    private static int Delay = 90;
+    private static int Delay = 200;
     private static int gameUnits = (WIDTH * HEIGHT) / (unitSize * unitSize);
     private static int x[] = new int[gameUnits];
     private static int y[] = new int[gameUnits];
@@ -25,6 +25,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private int fruitX;
     private int fruitY;
     private char direction = 'R';
+    public boolean directionChanged = false;
     private boolean gameOver = false;
     public FontMetrics fMetrics;
     private boolean fruitCounter = false;
@@ -40,8 +41,9 @@ public class GamePanel extends JPanel implements ActionListener {
     private Image tail_D;
     private Image tail_U;
     private Image bigFruit;
-    private Image bgBoard;
-    private int balance = body;
+    private boolean checkWall = false;
+    private static Image bgBoard[] = new Image[10];
+    private static int level = 1;
     private static AudioPlayer gameOverSound = new AudioPlayer("res/audio/failure.mp3");
     private static AudioPlayer eatSound = new AudioPlayer("res/audio/eating-sound.mp3");
     private static AudioPlayer moveSound = new AudioPlayer("res/audio/move.mp3");
@@ -57,7 +59,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.addKeyListener(new GameKeyAdapter());
         loadImage();
-        startGame();
+        startGame();        
     }
 
     /**
@@ -65,7 +67,8 @@ public class GamePanel extends JPanel implements ActionListener {
      */
     private void loadImage() {
         try {
-            bgBoard = new ImageIcon(getClass().getResource("res/Game-Board.png")).getImage();
+            bgBoard[1] = new ImageIcon(getClass().getResource("res/level/Game-Board-lv-1.png")).getImage();
+            // bgBoard[2] = new ImageIcon(getClass().getResource("res/level/Game-Board-lv-1.png")).getImage();
 
             fruit = new ImageIcon(getClass().getResource("res/fruit.png")).getImage();
             bigFruit = new ImageIcon(getClass().getResource("res/fruit-big.png")).getImage();
@@ -94,23 +97,30 @@ public class GamePanel extends JPanel implements ActionListener {
         newfruit();
         timer = new Timer(Delay, this);
         timer.start();
+        setPositionCenter();
+    }
+
+    private void setPositionCenter(){
+        x[0] = WIDTH / 2 - unitSize;
+        y[0] = HEIGHT / 2 - unitSize;
     }
 
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
-        g.drawImage(bgBoard,0,0, null);
         draw(g);
     }
 
     public void draw(Graphics g) {
         // for (int i = 0; i < HEIGHT / unitSize; i++) {
-        //     g.drawLine(i * unitSize, 0, i * unitSize, HEIGHT);
-        //     g.drawLine(0, i * unitSize, WIDTH, i * unitSize);
+        // g.drawLine(i * unitSize, 0, i * unitSize, HEIGHT);
+        // g.drawLine(0, i * unitSize, WIDTH, i * unitSize);
         // }
 
         if (running && !gameOver) {
+            g.drawImage(bgBoard[level], 0, 0, null);
             gameRunning(g);
         } else if (!running && !gameOver) {
+            g.drawImage(bgBoard[level], 0, 0, null);
             gamePaused(g);
         } else if (!running && gameOver) {
             gameOver(g);
@@ -124,7 +134,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private void gameRunning(Graphics g) {
 
         // draw game components and parts
-        drawComponentsAndParts(g);
+        drawComponentsAndParts(g, false);
 
         // set point bar
         g.setColor(Color.blue);
@@ -174,12 +184,12 @@ public class GamePanel extends JPanel implements ActionListener {
 
             /* Dont spawn fruit on walls */
             /* For every wall, check if newfruit is in the same coordinate */
-            // for(int i = numWalls;i>0;i--) {
-            // if((fruitX == wallX[i]) && (fruitY == wallY[i])) {
-            // collision = true;
-            // break;
-            // }
-            // }
+            
+            if(checkWall) {
+            collision = true;
+            break;
+            
+            }
 
             if (!collision) {
                 found = true;
@@ -188,7 +198,7 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     private void gamePaused(Graphics g) {
-        drawComponentsAndParts(g);
+        drawComponentsAndParts(g, false);
         g.setColor(Color.blue);
         g.setFont(new Font("Arial White", Font.BOLD, 30));
         fMetrics = getFontMetrics(g.getFont());
@@ -253,40 +263,23 @@ public class GamePanel extends JPanel implements ActionListener {
         returnMenuBtn.setBounds(50, 500, 230, 40);
     }
 
-    private void drawComponentsAndParts(Graphics g) {
+    private void drawComponentsAndParts(Graphics g, Boolean pause) {
 
         // draw fruit
         if (fruitCounter) {
             g.setColor(Color.RED);
-            // g.fillOval(fruitX, fruitY, unitSize * 2, unitSize * 2);
             g.drawImage(bigFruit, fruitX, fruitY, this);
             // fruitCounter = false;
         } else {
-            // g.setColor(Color.GREEN);
-            // g.fillOval(fruitX, fruitY, unitSize, unitSize);
             g.drawImage(fruit, fruitX, fruitY, this);
         }
 
-        ////// draw snake
-        // for (int i = 0; i < body; i++) {
-        // if (i == 0) {
-        // g.setColor(Color.RED);
-        // g.fillRect(x[i], y[i], unitSize, unitSize);
-        // // g.draw3DRect(x[i], y[i], 18, 18, getFocusTraversalKeysEnabled());
-        // // g.drawOval(x[i], y[i], 18, 18);
-        // // g.drawLine(x[i], y[i], 18, 18);
-        // // g.fill3DRect(x[i], y[i], 18, 18, true);
-        // } else {
-        // g.setColor(Color.white);
-
-        // g.fillRect(x[i], y[i], unitSize, unitSize);
-        // // g.fillRoundRect(x[i], y[i], unitSize, unitSize,WIDTH, HEIGHT);
-        // // g.fill3DRect(x[i], y[i], 18, 18, false);
-        // }
-        // }
-
+    if (!pause) {
         for (int i = 0; i < body; i++) {
             /* head */
+            System.out.println("\r"+"value of X: "+x[i]);
+            System.out.println("\r"+"value of y: "+y[i]);
+            
             if (i == 0) {
 
                 /* Fill head based on the current direction */
@@ -304,33 +297,37 @@ public class GamePanel extends JPanel implements ActionListener {
             /* body */
             else {
 
-                if (direction == 'R' || direction == 'L') {
-                    g.drawImage(body_X, x[i], y[i], this);
-                } else {
-                    g.drawImage(body_Y, x[i], y[i], this);
+                int turnX = -1, turnY = -1;
+                if (directionChanged) {
+                    turnX = x[0];
+                    turnY = y[0];
                 }
 
-                if (i + 1 == body) {
-                    --balance;
-                    if (direction == 'R' && balance == 0) {
-                        balance = body;
-                        g.drawImage(tail_R, x[i + 1], y[i + 1], this);
-                    } else if (direction == 'L' && balance == 0) {
-                        balance = body;
-                        g.drawImage(tail_L, x[i + 1], y[i + 1], this);
-                    } else if (direction == 'U' && balance == 0) {
-                        balance = body;
-                        g.drawImage(tail_U, x[i + 1], y[i + 1], this);
-                    } else if (direction == 'D' && balance == 0) {
-                        balance = body;
-                        g.drawImage(tail_D, x[i + 1], y[i + 1], this);
+                    if (i != body - 1) {
+                        if (turnX != -1 && x[i] == turnX && direction == 'R' || direction == 'L') {
+                            turnX = -1;
+
+                            g.drawImage(body_X, x[i], y[i], this);
+                        } else {
+                            g.drawImage(body_X, x[i], y[i], this);
+                        }
+                        if (turnY != -1 && y[i] == turnY && direction == 'U' || direction == 'D') {
+                            turnY = -1;
+                            g.drawImage(body_Y, x[i], y[i], this);
+                        } else {
+                            g.drawImage(body_Y, x[i], y[i], this);
+                        }
+                    } else{
+                        if (turnX != -1 && x[i] == turnX && direction == 'R') {
+                            turnX = -1;
+                            g.drawImage(tail_R, x[i], y[i], this);
+                        }
+
                     }
-
-                }
-
             }
-        }
 
+        }
+    }
     }
 
     public void move() {
@@ -364,25 +361,27 @@ public class GamePanel extends JPanel implements ActionListener {
             }
 
             // if head touch left border
-            if (x[0] < 0) {
+            if (x[0] == 0 || x[0] == 15) {
                 running = false;
                 gameOver = true;
             }
             // if head touch right border
-            if (x[0] > WIDTH - 15) {
+            if (x[0]  >= 570 ) {
                 running = false;
                 gameOver = true;
             }
             // if head touch top border
-            if (y[0] < 0) {
+            if (y[0] == 0 || y[0] == 15) {
                 running = false;
                 gameOver = true;
             }
             // if head touch buttom border
-            if (y[0] > HEIGHT) {
+            if (y[0] >= 570) {
                 running = false;
                 gameOver = true;
             }
+
+            
         }
         if (gameOver) {
             gameOverSound.start();
@@ -406,6 +405,7 @@ public class GamePanel extends JPanel implements ActionListener {
         returnMenuBtn.setVisible(false);
         x = new int[5000];
         y = new int[5000];
+        setPositionCenter();
         fruitEaten = 0;
         body = 6;
         paintComponent(getGraphics());
@@ -475,25 +475,34 @@ public class GamePanel extends JPanel implements ActionListener {
     }
 
     class GameKeyAdapter extends KeyAdapter {
+
         @Override
         public void keyPressed(KeyEvent e) {
             moveSound.start();
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    if (direction != 'R')
+                    if (direction != 'R'){
+                    directionChanged = true;
                         setDirection('L');
+                    }
                     break;
                 case KeyEvent.VK_RIGHT:
-                    if (direction != 'L')
+                    if (direction != 'L'){
+                        directionChanged = true;
                         setDirection('R');
+                    }
                     break;
                 case KeyEvent.VK_UP:
-                    if (direction != 'D')
-                        setDirection('U');
+                    if (direction != 'D'){
+                        directionChanged = true;
+                    setDirection('U');
+                }
                     break;
                 case KeyEvent.VK_DOWN:
-                    if (direction != 'U')
-                        setDirection('D');
+                    if (direction != 'U'){
+                        directionChanged = true;
+                    setDirection('D');
+                    }
                     break;
                 case KeyEvent.VK_ENTER:
                     timer.start();
