@@ -45,5 +45,11 @@ public class AudioPlayer {
 		}
 		
 	}
+	public void playForWhile() {
+		if(!clip.isRunning()) {
+			clip.start();
+		}
+	}
+
 
 }

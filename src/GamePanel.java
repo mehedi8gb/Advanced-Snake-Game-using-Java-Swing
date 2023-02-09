@@ -14,11 +14,11 @@ public class GamePanel extends JPanel implements ActionListener {
     private static int HEIGHT = 600;
     private static int WIDTH = 600;
     private static int unitSize = 15;
-    private static int Delay = 200;
+    private static int Delay = 100;
     private static int gameUnits = (WIDTH * HEIGHT) / (unitSize * unitSize);
     private static int x[] = new int[gameUnits];
     private static int y[] = new int[gameUnits];
-    private int body = 6;
+    private int body = 8;
     private Boolean running = false;
     private int fruitSize = 0, fruitCount = 0;
     private int fruitEaten = 0;
@@ -41,7 +41,6 @@ public class GamePanel extends JPanel implements ActionListener {
     private Image tail_D;
     private Image tail_U;
     private Image bigFruit;
-    private boolean checkWall = false;
     private static Image bgBoard[] = new Image[10];
     private static int level = 1;
     private static AudioPlayer gameOverSound = new AudioPlayer("res/audio/failure.mp3");
@@ -59,7 +58,7 @@ public class GamePanel extends JPanel implements ActionListener {
         this.setFocusable(true);
         this.addKeyListener(new GameKeyAdapter());
         loadImage();
-        startGame();        
+        startGame();
     }
 
     /**
@@ -68,7 +67,8 @@ public class GamePanel extends JPanel implements ActionListener {
     private void loadImage() {
         try {
             bgBoard[1] = new ImageIcon(getClass().getResource("res/level/Game-Board-lv-1.png")).getImage();
-            // bgBoard[2] = new ImageIcon(getClass().getResource("res/level/Game-Board-lv-1.png")).getImage();
+            // bgBoard[2] = new
+            // ImageIcon(getClass().getResource("res/level/Game-Board-lv-1.png")).getImage();
 
             fruit = new ImageIcon(getClass().getResource("res/fruit.png")).getImage();
             bigFruit = new ImageIcon(getClass().getResource("res/fruit-big.png")).getImage();
@@ -100,7 +100,7 @@ public class GamePanel extends JPanel implements ActionListener {
         setPositionCenter();
     }
 
-    private void setPositionCenter(){
+    private void setPositionCenter() {
         x[0] = WIDTH / 2 - unitSize;
         y[0] = HEIGHT / 2 - unitSize;
     }
@@ -184,11 +184,9 @@ public class GamePanel extends JPanel implements ActionListener {
 
             /* Dont spawn fruit on walls */
             /* For every wall, check if newfruit is in the same coordinate */
-            
-            if(checkWall) {
-            collision = true;
-            break;
-            
+
+            if (fruitX <= 15 || fruitX >= 570 || fruitY <= 15 || fruitY >= 570) {
+                collision = true;
             }
 
             if (!collision) {
@@ -274,34 +272,31 @@ public class GamePanel extends JPanel implements ActionListener {
             g.drawImage(fruit, fruitX, fruitY, this);
         }
 
-    if (!pause) {
-        for (int i = 0; i < body; i++) {
-            /* head */
-            System.out.println("\r"+"value of X: "+x[i]);
-            System.out.println("\r"+"value of y: "+y[i]);
-            
-            if (i == 0) {
+        if (!pause) {
+            for (int i = 0; i < body; i++) {
+                /* head */
+                if (i == 0) {
 
-                /* Fill head based on the current direction */
-                if (direction == 'U') {
-                    g.drawImage(head_U, x[i], y[i], this);
+                    /* Fill head based on the current direction */
+                    if (direction == 'U') {
+                        g.drawImage(head_U, x[i], y[i], this);
 
-                } else if (direction == 'D') {
-                    g.drawImage(head_D, x[i], y[i], this);
-                } else if (direction == 'L') {
-                    g.drawImage(head_L, x[i], y[i], this);
-                } else {
-                    g.drawImage(head_R, x[i], y[i], this);
+                    } else if (direction == 'D') {
+                        g.drawImage(head_D, x[i], y[i], this);
+                    } else if (direction == 'L') {
+                        g.drawImage(head_L, x[i], y[i], this);
+                    } else {
+                        g.drawImage(head_R, x[i], y[i], this);
+                    }
                 }
-            }
-            /* body */
-            else {
+                /* body */
+                else {
 
-                int turnX = -1, turnY = -1;
-                if (directionChanged) {
-                    turnX = x[0];
-                    turnY = y[0];
-                }
+                    int turnX = -1, turnY = -1;
+                    if (directionChanged) {
+                        turnX = x[0];
+                        turnY = y[0];
+                    }
 
                     if (i != body - 1) {
                         if (turnX != -1 && x[i] == turnX && direction == 'R' || direction == 'L') {
@@ -317,17 +312,17 @@ public class GamePanel extends JPanel implements ActionListener {
                         } else {
                             g.drawImage(body_Y, x[i], y[i], this);
                         }
-                    } else{
+                    } else {
                         if (turnX != -1 && x[i] == turnX && direction == 'R') {
                             turnX = -1;
                             g.drawImage(tail_R, x[i], y[i], this);
                         }
 
                     }
-            }
+                }
 
+            }
         }
-    }
     }
 
     public void move() {
@@ -361,17 +356,17 @@ public class GamePanel extends JPanel implements ActionListener {
             }
 
             // if head touch left border
-            if (x[0] == 0 || x[0] == 15) {
+            if (x[0] <= 15) {
                 running = false;
                 gameOver = true;
             }
             // if head touch right border
-            if (x[0]  >= 570 ) {
+            if (x[0] >= 570) {
                 running = false;
                 gameOver = true;
             }
             // if head touch top border
-            if (y[0] == 0 || y[0] == 15) {
+            if (y[0] <= 15) {
                 running = false;
                 gameOver = true;
             }
@@ -381,7 +376,6 @@ public class GamePanel extends JPanel implements ActionListener {
                 gameOver = true;
             }
 
-            
         }
         if (gameOver) {
             gameOverSound.start();
@@ -481,28 +475,32 @@ public class GamePanel extends JPanel implements ActionListener {
             moveSound.start();
             switch (e.getKeyCode()) {
                 case KeyEvent.VK_LEFT:
-                    if (direction != 'R'){
-                    directionChanged = true;
+                    if (direction != 'R') {
+                        directionChanged = true;
                         setDirection('L');
                     }
                     break;
                 case KeyEvent.VK_RIGHT:
-                    if (direction != 'L'){
+                    if (direction != 'L') {
                         directionChanged = true;
                         setDirection('R');
                     }
                     break;
                 case KeyEvent.VK_UP:
-                    if (direction != 'D'){
+                    if (direction != 'D') {
                         directionChanged = true;
-                    setDirection('U');
-                }
+                        setDirection('U');
+                    }
                     break;
                 case KeyEvent.VK_DOWN:
-                    if (direction != 'U'){
+                    if (direction != 'U') {
                         directionChanged = true;
-                    setDirection('D');
+                        setDirection('D');
                     }
+                    break;
+                case KeyEvent.VK_SPACE:
+                System.out.println("\r" + "X: " + x[0] + "; Y : " + y[0]);
+                System.out.println("\r" + "f-X: " + fruitX + "; f-Y : " + fruitY);
                     break;
                 case KeyEvent.VK_ENTER:
                     timer.start();
