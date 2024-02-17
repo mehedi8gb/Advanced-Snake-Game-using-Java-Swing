@@ -47,7 +47,7 @@ public class GamePanel extends JPanel implements ActionListener {
     private static AudioPlayer eatSound = new AudioPlayer("res/audio/eating-sound.mp3");
     private static AudioPlayer moveSound = new AudioPlayer("res/audio/move.mp3");
 
-    // End of variables declaration
+    // End of variables declarations
 
     public GamePanel() {
         random = new Random();
